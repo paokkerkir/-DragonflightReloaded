@@ -1,7 +1,7 @@
-# Dragonflight: Reloaded 2
+# Dragonflight: Reloaded 2.2.21
 ![Logo](https://i.ibb.co/V0FDH29h/logo.png)
 
-The Dragonflight UI for Turtle WoW (1.18).
+The Dragonflight UI for Turtle WoW (1.18.1).
 
 ## Features
 - 100% dynamically scripted - no reloading required
@@ -47,3 +47,4 @@ The Dragonflight UI for Turtle WoW (1.18).
 - Shagu (teacher, learned from pfUI / ShaguTweaks)
 - DragonflightUI by Karl-Heinz Schneider
 - TurtleDragonflight
+- paokkerkir, Squid Lips for 1.18.1 fixes.

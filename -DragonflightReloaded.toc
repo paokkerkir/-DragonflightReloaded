@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Dragonflight: |cFFFFFFFFReloaded |cFFFF00002
-## Notes: The Dragonflight UI for Turtle WoW (1.18).
-## Version: 2.2.2
+## Notes: The Dragonflight UI for Turtle WoW (1.18.1).
+## Version: 2.2.21
 ## Author: Guzruul
 ## SavedVariables: DFRL_PROFILES, DFRL_DB_SETUP
 ## SavedVariablesPerCharacter: DFRL_CUR_PROFILE, DFRL_FRAMEPOS
