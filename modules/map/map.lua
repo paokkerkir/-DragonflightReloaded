@@ -754,13 +754,19 @@ DFRL:NewMod("Map", 1, function()
 
         callbacks.showTracking = function(value)
             if value then
-                MiniMapTrackingFrame:ClearAllPoints()
-                MiniMapTrackingFrame:SetPoint("TOPRIGHT", Setup.topPanel, "TOPLEFT", -15, 0)
-                MiniMapTrackingFrame:SetScale(0.6)
-                MiniMapTrackingBorder:Hide()
+                MiniMapTrackingFrame.DFRLHidden = nil
+                if MiniMapTrackingFrame.DFRLOrigShow then
+                    MiniMapTrackingFrame.Show = MiniMapTrackingFrame.DFRLOrigShow
+                    MiniMapTrackingFrame.DFRLOrigShow = nil
+                end
                 MiniMapTrackingFrame:Show()
             else
+                MiniMapTrackingFrame.DFRLHidden = true
                 MiniMapTrackingFrame:Hide()
+                if not MiniMapTrackingFrame.DFRLOrigShow then
+                    MiniMapTrackingFrame.DFRLOrigShow = MiniMapTrackingFrame.Show
+                    MiniMapTrackingFrame.Show = function() end
+                end
             end
         end
 
