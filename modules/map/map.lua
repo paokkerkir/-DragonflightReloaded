@@ -3,8 +3,9 @@ DFRL:NewDefaults("Map", {
     mapDarkMode = {0, "slider", {0, 1}, nil, "appearance", 1, "Adjust dark mode intensity", nil, nil},
     mapColor = {{1, 1, 1}, "colour", nil, nil, "appearance", 2, "Change map color", nil, nil},
     mapSquare = {false, "checkbox", nil, nil, "map basic", 3, "Show the Minimap Square design", nil, nil},
-    showSunMoon = {false, "checkbox", nil, nil, "map basic", 4, "Show Blzzards sun/moon indicator", nil, nil},
-    mapSize = {180, "slider", {140, 350}, nil, "map basic", 5, "Adjusts the overall size of the minimap", "Bug: move char after setting (unfixable)", nil},
+    showTracking = {true, "checkbox", nil, nil, "map basic", 4, "Show the Minimap Tracking icon", nil, nil},
+    showSunMoon = {false, "checkbox", nil, nil, "map basic", 5, "Show Blzzards sun/moon indicator", nil, nil},
+    mapSize = {180, "slider", {140, 350}, nil, "map basic", 6, "Adjusts the overall size of the minimap", "Bug: move char after setting (unfixable)", nil},
     mapAlpha = {1, "slider", {0.1, 1}, nil, "map basic", 6, "Adjusts transparency of the entire minimap", nil, nil},
     mapShadow = {true, "checkbox", nil, nil, "map shadow", 7, "Show or hide the shadow inside the minimap", nil, nil},
     alphaShadow = {0.3, "slider", {0.1, 1}, nil, "map shadow", 8, "Adjusts transparency of the minimap shadow", nil, nil},
@@ -748,6 +749,18 @@ DFRL:NewMod("Map", 1, function()
                 GameTimeFrame:Show()
             else
                 GameTimeFrame:Hide()
+            end
+        end
+
+        callbacks.showTracking = function(value)
+            if value then
+                MiniMapTrackingFrame:ClearAllPoints()
+                MiniMapTrackingFrame:SetPoint("TOPRIGHT", Setup.topPanel, "TOPLEFT", -15, 0)
+                MiniMapTrackingFrame:SetScale(0.6)
+                MiniMapTrackingBorder:Hide()
+                MiniMapTrackingFrame:Show()
+            else
+                MiniMapTrackingFrame:Hide()
             end
         end
 
