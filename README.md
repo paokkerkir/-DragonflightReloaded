@@ -1,4 +1,4 @@
-# Dragonflight: Reloaded 2.2.21
+# Dragonflight: Reloaded 2.3
 ![Logo](https://i.ibb.co/V0FDH29h/logo.png)
 
 The Dragonflight UI for Turtle WoW (1.18.1).
@@ -7,6 +7,13 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 - 100% dynamically scripted - no reloading required
 - Profile system
 - Over 230 settings combined with ShaguTweaks + ShaguTweaks-extras
+
+**NEW
+- Aura system with buff/debuff icons on Player, Target, Pet, and Party frames
+- Debuff type coloring (Magic, Disease, Poison, Curse)
+- Buff & debuff duration timers (REQUIRES SUPERWOW + NAMPOWER)
+- Draggable aura positioning with per-frame settings via Auras tab
+- Option to hide minimap tracking icon
 
   <br>
 
@@ -17,15 +24,19 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 - BagShui compatibility
 
 ## Screenshots
-![Screenshot 1](https://i.ibb.co/spMXBRV9/1.png)
+![Screenshot 1](https://i.ibb.co/tPJqc32j/Screenshot-2026-03-24-044211.png)
 
-![Screenshot 2](https://i.postimg.cc/MTsvPBKH/3.png)
+![Screenshot 2](https://i.ibb.co/d4qswKtz/Screenshot-2026-03-24-044223.png)
 
-![Screenshot 3](https://i.ibb.co/S12FS8g/3.png)
+![Screenshot 3](https://i.ibb.co/spMXBRV9/1.png)
 
-![Screenshot 4](https://i.ibb.co/B5hSbbvC/5.png)
+![Screenshot 4](https://i.postimg.cc/MTsvPBKH/3.png)
 
-![Screenshot 5](https://i.ibb.co/RpzzgpnD/prev0.gif)
+![Screenshot 5](https://i.ibb.co/S12FS8g/3.png)
+
+![Screenshot 6](https://i.ibb.co/B5hSbbvC/5.png)
+
+![Screenshot 7](https://i.ibb.co/RpzzgpnD/prev0.gif)
 
 ## Installation
 
@@ -43,8 +54,9 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 
 ## Credits
 
+- Guzruul for DFRL 2.2.2
 - Blizzard (obviously)
 - Shagu (teacher, learned from pfUI / ShaguTweaks)
 - DragonflightUI by Karl-Heinz Schneider
 - TurtleDragonflight
-- paokkerkir, Squid Lips for 1.18.1 fixes.
+- Squid Lips for 1.18.1 fixes.

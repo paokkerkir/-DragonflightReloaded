@@ -81,7 +81,8 @@ DFRL:NewMod("Gui-elem", 3, function()
             ["PVPIcon"]  = {14, 2},
             ["Target"]  = {14, 3},
             ["Mini"]    = {14, 4},
-            ["Xprep"]   = {15, 1},
+            ["Auras"]   = {15, 1},
+            ["Xprep"]   = {16, 1},
         },
     }
 

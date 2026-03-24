@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Dragonflight: |cFFFFFFFFReloaded |cFFFF00002
 ## Notes: The Dragonflight UI for Turtle WoW (1.18.1).
-## Version: 2.2.21
+## Version: 2.3
 ## Author: paokkerkir
 ## SavedVariables: DFRL_PROFILES, DFRL_DB_SETUP
 ## SavedVariablesPerCharacter: DFRL_CUR_PROFILE, DFRL_FRAMEPOS
@@ -16,6 +16,12 @@ core\first.lua
 
 # DATA
 data\tables.lua
+data\debuffs.lua
+
+# LIBS
+libs\libtipscan.lua
+libs\libspell.lua
+libs\libdebuff.lua
 
 # MODULES
 modules\bars\bars.lua
@@ -36,6 +42,7 @@ modules\ui\errorHandler.lua
 modules\unit\player.lua
 modules\unit\target.lua
 modules\unit\mini.lua
+modules\unit\auras.lua
 modules\unit\pvp.lua
 modules\xprep\xprep.lua
 modules\track\track.lua

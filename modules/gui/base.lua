@@ -12,7 +12,7 @@ DFRL:NewMod("Gui-base", 2, function()
 
         CONSTANTS = {
             MAIN_FRAME_WIDTH = 900,
-            MAIN_FRAME_HEIGHT = 600,
+            MAIN_FRAME_HEIGHT = 630,
             TAB_FRAME_WIDTH = 130,
             TITLE_FRAME_HEIGHT = 30,
             SUB_FRAME_HEIGHT = 30,
@@ -85,7 +85,8 @@ DFRL:NewMod("Gui-base", 2, function()
             [12] = "Minimap",
             [13] = "Third Party",
             [14] = "Unitframes",
-            [15] = "Xprep",
+            [15] = "Auras",
+            [16] = "Xprep",
         }
     }
 

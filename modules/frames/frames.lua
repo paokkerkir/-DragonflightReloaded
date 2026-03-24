@@ -39,6 +39,15 @@ DFRL:NewMod("Frames", 2, function()
             BuffButton32,
             QuestTimerFrame,
 
+            -- Aura anchors
+            _G["DFRL_AuraAnchor_Player"],
+            _G["DFRL_AuraAnchor_Target"],
+            _G["DFRL_AuraAnchor_Pet"],
+            _G["DFRL_AuraAnchor_Party1"],
+            _G["DFRL_AuraAnchor_Party2"],
+            _G["DFRL_AuraAnchor_Party3"],
+            _G["DFRL_AuraAnchor_Party4"],
+
             -- 3rd party
             DFRL.PWB_Panel,
         }
