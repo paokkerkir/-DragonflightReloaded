@@ -8,6 +8,7 @@ DFRL:NewDefaults("Auras", {
     playerAuraSize = {20, "slider", {10, 30}, nil, "Player", 5, "Icon size", nil, nil},
     playerAuraSpacing = {2, "slider", {0, 6}, nil, "Player", 6, "Icon spacing", nil, nil},
     playerAurasPerRow = {5, "slider", {3, 8}, nil, "Player", 7, "Icons per row", nil, nil},
+    playerGrowRight = {true, "checkbox", nil, nil, "Player", 8, "Grow icons right", nil, nil},
     -- Target
     targetBuffs = {true, "checkbox", nil, nil, "Target", 1, "Show buffs", nil, nil},
     targetDebuffs = {true, "checkbox", nil, nil, "Target", 2, "Show debuffs", nil, nil},
@@ -16,6 +17,7 @@ DFRL:NewDefaults("Auras", {
     targetAuraSize = {20, "slider", {10, 30}, nil, "Target", 5, "Icon size", nil, nil},
     targetAuraSpacing = {2, "slider", {0, 6}, nil, "Target", 6, "Icon spacing", nil, nil},
     targetAurasPerRow = {5, "slider", {3, 8}, nil, "Target", 7, "Icons per row", nil, nil},
+    targetGrowRight = {false, "checkbox", nil, nil, "Target", 8, "Grow icons right", nil, nil},
     -- Pet
     petBuffs = {true, "checkbox", nil, nil, "Pet", 1, "Show buffs", nil, nil},
     petDebuffs = {true, "checkbox", nil, nil, "Pet", 2, "Show debuffs", nil, nil},
@@ -24,6 +26,7 @@ DFRL:NewDefaults("Auras", {
     petAuraSize = {20, "slider", {10, 30}, nil, "Pet", 5, "Icon size", nil, nil},
     petAuraSpacing = {2, "slider", {0, 6}, nil, "Pet", 6, "Icon spacing", nil, nil},
     petAurasPerRow = {5, "slider", {3, 8}, nil, "Pet", 7, "Icons per row", nil, nil},
+    petGrowRight = {true, "checkbox", nil, nil, "Pet", 8, "Grow icons right", nil, nil},
     -- Party
     partyBuffs = {true, "checkbox", nil, nil, "Party", 1, "Show buffs", nil, nil},
     partyDebuffs = {true, "checkbox", nil, nil, "Party", 2, "Show debuffs", nil, nil},
@@ -32,6 +35,7 @@ DFRL:NewDefaults("Auras", {
     partyAuraSize = {20, "slider", {10, 30}, nil, "Party", 5, "Icon size", nil, nil},
     partyAuraSpacing = {2, "slider", {0, 6}, nil, "Party", 6, "Icon spacing", nil, nil},
     partyAurasPerRow = {5, "slider", {3, 8}, nil, "Party", 7, "Icons per row", nil, nil},
+    partyGrowRight = {true, "checkbox", nil, nil, "Party", 8, "Grow icons right", nil, nil},
 })
 
 DFRL:NewMod("Auras", 2, function()
@@ -765,13 +769,15 @@ DFRL:NewMod("Auras", 2, function()
         local showDebuffs = DFRL:GetTempDB("Auras", "playerDebuffs")
         local showBuffTimer = DFRL:GetTempDB("Auras", "playerShowBuffTimer")
         local showDebuffTimer = DFRL:GetTempDB("Auras", "playerShowDebuffTimer")
+        local growRight = DFRL:GetTempDB("Auras", "playerGrowRight")
+        if growRight == nil then growRight = true end
         local sz = GetAuraSize("player")
         local sp = GetAuraSpacing("player")
         local pr = GetAurasPerRow("player")
         local step = sz + sp
 
         if showBuffs then
-            UpdateBuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, 0, true, showBuffTimer, sz, sp, pr)
+            UpdateBuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.player.buffs[i]:Hide() end
         end
@@ -779,7 +785,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.player, pr) or 0
 
         if showDebuffs then
-            UpdateDebuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, true, 0, showDebuffTimer, sz, sp, pr)
+            UpdateDebuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.player.debuffs[i]:Hide() end
         end
@@ -790,13 +796,15 @@ DFRL:NewMod("Auras", 2, function()
         local showDebuffs = DFRL:GetTempDB("Auras", "targetDebuffs")
         local showBuffTimer = DFRL:GetTempDB("Auras", "targetShowBuffTimer")
         local showDebuffTimer = DFRL:GetTempDB("Auras", "targetShowDebuffTimer")
+        local growRight = DFRL:GetTempDB("Auras", "targetGrowRight")
+        if growRight == nil then growRight = false end
         local sz = GetAuraSize("target")
         local sp = GetAuraSpacing("target")
         local pr = GetAurasPerRow("target")
         local step = sz + sp
 
         if showBuffs then
-            UpdateBuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, 0, false, showBuffTimer, sz, sp, pr)
+            UpdateBuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, 0, growRight, showBuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.target.buffs[i]:Hide() end
         end
@@ -804,7 +812,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.target, pr) or 0
 
         if showDebuffs then
-            UpdateDebuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, -buffRows * step, false, 0, showDebuffTimer, sz, sp, pr)
+            UpdateDebuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.target.debuffs[i]:Hide() end
         end
@@ -817,13 +825,15 @@ DFRL:NewMod("Auras", 2, function()
         local showDebuffs = DFRL:GetTempDB("Auras", "petDebuffs")
         local showBuffTimer = DFRL:GetTempDB("Auras", "petShowBuffTimer")
         local showDebuffTimer = DFRL:GetTempDB("Auras", "petShowDebuffTimer")
+        local growRight = DFRL:GetTempDB("Auras", "petGrowRight")
+        if growRight == nil then growRight = true end
         local sz = GetAuraSize("pet")
         local sp = GetAuraSpacing("pet")
         local pr = GetAurasPerRow("pet")
         local step = sz + sp
 
         if showBuffs and UnitExists("pet") then
-            UpdateBuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, 0, true, showBuffTimer, sz, sp, pr)
+            UpdateBuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.pet.buffs[i]:Hide() end
         end
@@ -831,7 +841,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.pet, pr) or 0
 
         if showDebuffs and UnitExists("pet") then
-            UpdateDebuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, true, 0, showDebuffTimer, sz, sp, pr)
+            UpdateDebuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr)
         else
             for i = 1, 16 do unitData.pet.debuffs[i]:Hide() end
         end
@@ -843,6 +853,8 @@ DFRL:NewMod("Auras", 2, function()
         local showDebuffs = DFRL:GetTempDB("Auras", "partyDebuffs")
         local showBuffTimer = DFRL:GetTempDB("Auras", "partyShowBuffTimer")
         local showDebuffTimer = DFRL:GetTempDB("Auras", "partyShowDebuffTimer")
+        local growRight = DFRL:GetTempDB("Auras", "partyGrowRight")
+        if growRight == nil then growRight = true end
         local sz = GetAuraSize("party")
         local sp = GetAuraSpacing("party")
         local pr = GetAurasPerRow("party")
@@ -852,7 +864,7 @@ DFRL:NewMod("Auras", 2, function()
             if not partyAnchors[idx] then break end
 
             if showBuffs and UnitExists("party" .. idx) then
-                UpdateBuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, 0, true, showBuffTimer, sz, sp, pr)
+                UpdateBuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr)
             else
                 for i = 1, 16 do
                     if partyData[idx].buffs[i] then partyData[idx].buffs[i]:Hide() end
@@ -862,7 +874,7 @@ DFRL:NewMod("Auras", 2, function()
             local buffRows = showBuffs and CountVisibleBuffRows(partyData[idx], pr) or 0
 
             if showDebuffs and UnitExists("party" .. idx) then
-                UpdateDebuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, -buffRows * step, true, 0, showDebuffTimer, sz, sp, pr)
+                UpdateDebuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr)
             else
                 for i = 1, 16 do
                     if partyData[idx].debuffs[i] then partyData[idx].debuffs[i]:Hide() end
