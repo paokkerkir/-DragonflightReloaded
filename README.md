@@ -9,12 +9,12 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 - Over 230 settings combined with ShaguTweaks + ShaguTweaks-extras
 
 **NEW
-- Custom Buff Bar to replace default top-right buffs (draggable via Ctrl+Alt+Shift, configurable size/spacing/sort)
+- Optional Buff Bar to replace default top-right buffs (draggable via Ctrl+Alt+Shift, configurable size/spacing/sort)
 - Sort by: Duration ascending, Duration descending, or Default WoW order
 - Aura system with buff/debuff icons on Player, Target, Pet, and Party frames
 - Debuff type coloring (Magic, Disease, Poison, Curse)
 - Buff & debuff duration timers (requires SuperWoW + nampower)
-- Cooldown spiral overlay on expiring buffs/debuffs (per-category toggle)
+- Cooldown spiral overlay on expiring debuffs (per-category toggle)
 - Draggable aura positioning with per-frame settings via Auras tab
 - Timer style options: Gold or White + Red (DF3 style) per category
 - Configurable timer font size per category
