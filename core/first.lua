@@ -35,10 +35,10 @@ function Setup:TempDBForSwitching(isDarkMode)
         if moduleTable then
             DFRL.tempDB[moduleName] = {}
             for key, value in pairs(moduleTable) do
-                if value then
-                    DFRL.tempDB[moduleName][key] = value
-                end
-            end
+				if value ~= nil then
+				DFRL.tempDB[moduleName][key] = value
+				end
+			end
         end
     end
 
