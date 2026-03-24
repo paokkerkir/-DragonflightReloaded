@@ -12,7 +12,7 @@ DFRL:NewMod("Gui-base", 2, function()
 
         CONSTANTS = {
             MAIN_FRAME_WIDTH = 900,
-            MAIN_FRAME_HEIGHT = 630,
+            MAIN_FRAME_HEIGHT = 660,
             TAB_FRAME_WIDTH = 130,
             TITLE_FRAME_HEIGHT = 30,
             SUB_FRAME_HEIGHT = 30,

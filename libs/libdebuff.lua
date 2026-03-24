@@ -5,6 +5,8 @@
 
 DFRL_Libs = DFRL_Libs or {}
 
+local hooksecurefunc = DFRL.env.hooksecurefunc or _G.hooksecurefunc
+
 local libdebuff = CreateFrame("Frame", "DFRL_DebuffScanner", UIParent)
 local scanner = DFRL_Libs.libtipscan:GetScanner("libdebuff")
 local _, playerClass = UnitClass("player")

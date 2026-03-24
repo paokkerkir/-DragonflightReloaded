@@ -1,4 +1,4 @@
-# Dragonflight: Reloaded 2.3
+# Dragonflight: Reloaded 2.3.5
 ![Logo](https://i.ibb.co/V0FDH29h/logo.png)
 
 The Dragonflight UI for Turtle WoW (1.18.1).
@@ -9,10 +9,16 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 - Over 230 settings combined with ShaguTweaks + ShaguTweaks-extras
 
 **NEW
+- Custom Buff Bar to replace default top-right buffs (draggable via Ctrl+Alt+Shift, configurable size/spacing/sort)
+- Sort by: Duration ascending, Duration descending, or Default WoW order
 - Aura system with buff/debuff icons on Player, Target, Pet, and Party frames
 - Debuff type coloring (Magic, Disease, Poison, Curse)
-- Buff & debuff duration timers (REQUIRES SUPERWOW + NAMPOWER)
+- Buff & debuff duration timers (requires SuperWoW + nampower)
+- Cooldown spiral overlay on expiring buffs/debuffs (per-category toggle)
 - Draggable aura positioning with per-frame settings via Auras tab
+- Timer style options: Gold or White + Red (DF3 style) per category
+- Configurable timer font size per category
+- Timer inside or outside icons (Buff Bar)
 - Option to hide minimap tracking icon
 
   <br>
@@ -51,10 +57,11 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 
 - Type `/dfrl` in chat to access addon commands and settings.
 - Use CTRL + ALT + SHIFT to move your frames.
+- If you prefer previous auras behaviour, untick Auras module in UI configuration
 
 ## Credits
 
-- Guzruul for DFRL 2.2.2
+- Guzruul for DFRL 2.2.2 and DF3
 - Blizzard (obviously)
 - Shagu (teacher, learned from pfUI / ShaguTweaks)
 - DragonflightUI by Karl-Heinz Schneider

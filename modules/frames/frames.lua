@@ -48,6 +48,9 @@ DFRL:NewMod("Frames", 2, function()
             _G["DFRL_AuraAnchor_Party3"],
             _G["DFRL_AuraAnchor_Party4"],
 
+            -- Buff bar
+            _G["DFRL_BuffBar_Buffs"],
+
             -- 3rd party
             DFRL.PWB_Panel,
         }
@@ -64,9 +67,12 @@ DFRL:NewMod("Frames", 2, function()
             if not DFRL_FRAMEPOS then return end
             for name, pos in pairs(DFRL_FRAMEPOS) do
                 local frame = _G[name]
-                if frame then
+                if frame and pos.x and pos.y then
                     frame:ClearAllPoints()
                     frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", pos.x, pos.y)
+                elseif not pos.x then
+                    -- Clean up invalid position entries (old format)
+                    DFRL_FRAMEPOS[name] = nil
                 end
             end
         end

@@ -16,7 +16,7 @@ DFRL:NewMod("Gui-home", 3, function()
         HOME_FADE_TIME = 0.1,
         HOME_STAY_TIME = 0.3,
         HOME_PAUSE_TIME = 0.01,
-        HOME_TEXTS = {"dragonflight", "reloaded", "2.0"},
+        HOME_TEXTS = {"dragonflight", "reloaded", "2.3.5"},
 
         HOME_PULSE_SPEED = 1.3,
         HOME_MIN_ALPHA = 0.5,

@@ -193,6 +193,7 @@ function DFRL:GetTempValue(name, key)
 end
 
 function DFRL:GetTempDB(mod, key)
+    if not self.tempDB[mod] then return nil end
     return self.tempDB[mod][key]
 end
 
@@ -278,6 +279,7 @@ function DFRL:NewCallbacks(mod, callbacks)
 end
 
 function DFRL:TriggerCallback(cb, value)
+    if not self.callbacks[cb] then return end
     for _, func in ipairs(self.callbacks[cb]) do
         func(value)
     end
