@@ -751,13 +751,16 @@ DFRL:NewMod("Gui-elem", 3, function()
                 local meta = self.metadata[metaKey]
                 local value = self:GetCache(module, name)
 
-                if data.type == "checkbox" then
-                    element:SetChecked(value)
-                elseif data.type == "slider" then
-                    element:SetValue(value)
-                elseif data.type == "dropdown" then
-                    element.text:SetText(value)
-                elseif data.type == "colour" then
+                if value ~= nil then
+                    if data.type == "checkbox" then
+                        element:SetChecked(value)
+                    elseif data.type == "slider" then
+                        element:SetValue(value)
+                    elseif data.type == "dropdown" then
+                        element.text:SetText(value)
+                    end
+                end
+                if data.type == "colour" then
                     if type(value) == "table" and table.getn(value) >= 3 then
                         for i = 1, 30 do
                             local color = element.BASIC_COLORS and element.BASIC_COLORS[i]
