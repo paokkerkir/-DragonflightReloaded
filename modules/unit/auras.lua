@@ -26,6 +26,7 @@ DFRL:NewDefaults("Auras", {
     playerGrowRight = {true, "checkbox", nil, nil, "Player", 9, "Grow icons right", nil, nil},
     playerTimerFontSize = {8, "slider", {6, 20}, nil, "Player", 10, "Timer font size", nil, nil},
     playerTimerStyle = {"White + Red", "dropdown", {"Gold", "White + Red"}, nil, "Player", 11, "Timer color style", nil, nil},
+    playerSortOrder = {"Default", "dropdown", {"Default", "Duration ascending", "Duration descending"}, nil, "Player", 12, "Sort by", nil, nil},
     -- Target
     targetBuffs = {true, "checkbox", nil, nil, "Target", 1, "Show buffs", nil, nil},
     targetDebuffs = {true, "checkbox", nil, nil, "Target", 2, "Show debuffs", nil, nil},
@@ -38,6 +39,7 @@ DFRL:NewDefaults("Auras", {
     targetGrowRight = {false, "checkbox", nil, nil, "Target", 9, "Grow icons right", nil, nil},
     targetTimerFontSize = {8, "slider", {6, 20}, nil, "Target", 10, "Timer font size", nil, nil},
     targetTimerStyle = {"White + Red", "dropdown", {"Gold", "White + Red"}, nil, "Target", 11, "Timer color style", nil, nil},
+    targetSortOrder = {"Default", "dropdown", {"Default", "Duration ascending", "Duration descending"}, nil, "Target", 12, "Sort by", nil, nil},
     -- Pet
     petBuffs = {true, "checkbox", nil, nil, "Pet", 1, "Show buffs", nil, nil},
     petDebuffs = {true, "checkbox", nil, nil, "Pet", 2, "Show debuffs", nil, nil},
@@ -50,6 +52,7 @@ DFRL:NewDefaults("Auras", {
     petGrowRight = {true, "checkbox", nil, nil, "Pet", 9, "Grow icons right", nil, nil},
     petTimerFontSize = {8, "slider", {6, 20}, nil, "Pet", 10, "Timer font size", nil, nil},
     petTimerStyle = {"White + Red", "dropdown", {"Gold", "White + Red"}, nil, "Pet", 11, "Timer color style", nil, nil},
+    petSortOrder = {"Default", "dropdown", {"Default", "Duration ascending", "Duration descending"}, nil, "Pet", 12, "Sort by", nil, nil},
     -- Party
     partyBuffs = {true, "checkbox", nil, nil, "Party", 1, "Show buffs", nil, nil},
     partyDebuffs = {true, "checkbox", nil, nil, "Party", 2, "Show debuffs", nil, nil},
@@ -62,6 +65,7 @@ DFRL:NewDefaults("Auras", {
     partyGrowRight = {true, "checkbox", nil, nil, "Party", 9, "Grow icons right", nil, nil},
     partyTimerFontSize = {8, "slider", {6, 20}, nil, "Party", 10, "Timer font size", nil, nil},
     partyTimerStyle = {"White + Red", "dropdown", {"Gold", "White + Red"}, nil, "Party", 11, "Timer color style", nil, nil},
+    partySortOrder = {"Default", "dropdown", {"Default", "Duration ascending", "Duration descending"}, nil, "Party", 12, "Sort by", nil, nil},
 })
 
 DFRL:NewMod("Auras", 2, function()
@@ -254,22 +258,22 @@ DFRL:NewMod("Auras", 2, function()
     local function FormatTime(remaining, style)
         if not style or style == "Gold" then
             if remaining >= 86400 then
-                return math.floor(remaining / 86400) .. "d"
+                return math.ceil(remaining / 86400) .. "d"
             elseif remaining >= 3600 then
-                return math.floor(remaining / 3600) .. "h"
+                return math.ceil(remaining / 3600) .. "h"
             elseif remaining >= 60 then
-                return math.floor(remaining / 60) .. "m"
+                return math.ceil(remaining / 60) .. "m"
             else
                 return math.floor(remaining) .. ""
             end
         else
             -- DF3 style: white number + red suffix letter
             if remaining >= 86400 then
-                return math.floor(remaining / 86400) .. "|cffff0000d|r"
+                return math.ceil(remaining / 86400) .. "|cffff0000d|r"
             elseif remaining >= 3600 then
-                return math.floor(remaining / 3600) .. "|cffff0000h|r"
+                return math.ceil(remaining / 3600) .. "|cffff0000h|r"
             elseif remaining >= 60 then
-                return math.floor(remaining / 60) .. "|cffff0000m|r"
+                return math.ceil(remaining / 60) .. "|cffff0000m|r"
             else
                 return tostring(math.floor(remaining))
             end
@@ -283,6 +287,10 @@ DFRL:NewMod("Auras", 2, function()
 
     local function GetTimerFontSize(prefix)
         return DFRL:GetTempDB("Auras", prefix .. "TimerFontSize") or 8
+    end
+
+    local function GetSortOrder(prefix)
+        return DFRL:GetTempDB("Auras", prefix .. "SortOrder") or "Default"
     end
 
     -- Apply timer color based on style
@@ -608,43 +616,97 @@ DFRL:NewMod("Auras", 2, function()
     -- Layout helpers (compact - no gaps between visible icons)
     -------------------------------------------------------------------
 
-    local function LayoutBuffs(buttons, anchor, anchorPoint, relPoint, xOff, yOff, growRight, iconSize, iconSpacing, perRow)
+    local function LayoutBuffs(buttons, anchor, anchorPoint, relPoint, xOff, yOff, growRight, iconSize, iconSpacing, perRow, sortedOrder)
         local step = iconSize + iconSpacing
         local visCount = 0
-        for i = 1, 16 do
-            if buttons[i]:IsShown() then
-                local row = math.floor(visCount / perRow)
-                local col = math.mod(visCount, perRow)
-                local colOff = growRight and (col * step) or (-col * step)
-                buttons[i]:ClearAllPoints()
-                buttons[i]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
-                visCount = visCount + 1
+        if sortedOrder then
+            for _, idx in ipairs(sortedOrder) do
+                if buttons[idx]:IsShown() then
+                    local row = math.floor(visCount / perRow)
+                    local col = math.mod(visCount, perRow)
+                    local colOff = growRight and (col * step) or (-col * step)
+                    buttons[idx]:ClearAllPoints()
+                    buttons[idx]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
+                    visCount = visCount + 1
+                end
+            end
+        else
+            for i = 1, 16 do
+                if buttons[i]:IsShown() then
+                    local row = math.floor(visCount / perRow)
+                    local col = math.mod(visCount, perRow)
+                    local colOff = growRight and (col * step) or (-col * step)
+                    buttons[i]:ClearAllPoints()
+                    buttons[i]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
+                    visCount = visCount + 1
+                end
             end
         end
         return visCount
     end
 
-    local function LayoutDebuffs(buttons, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, iconSize, iconSpacing, perRow)
+    local function LayoutDebuffs(buttons, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, iconSize, iconSpacing, perRow, sortedOrder)
         local step = iconSize + iconSpacing
         local visCount = 0
-        for i = 1, 16 do
-            if buttons[i]:IsShown() then
-                local row = math.floor(visCount / perRow) + (extraRowOffset or 0)
-                local col = math.mod(visCount, perRow)
-                local colOff = growRight and (col * step) or (-col * step)
-                buttons[i]:ClearAllPoints()
-                buttons[i]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
-                visCount = visCount + 1
+        if sortedOrder then
+            for _, idx in ipairs(sortedOrder) do
+                if buttons[idx]:IsShown() then
+                    local row = math.floor(visCount / perRow) + (extraRowOffset or 0)
+                    local col = math.mod(visCount, perRow)
+                    local colOff = growRight and (col * step) or (-col * step)
+                    buttons[idx]:ClearAllPoints()
+                    buttons[idx]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
+                    visCount = visCount + 1
+                end
+            end
+        else
+            for i = 1, 16 do
+                if buttons[i]:IsShown() then
+                    local row = math.floor(visCount / perRow) + (extraRowOffset or 0)
+                    local col = math.mod(visCount, perRow)
+                    local colOff = growRight and (col * step) or (-col * step)
+                    buttons[i]:ClearAllPoints()
+                    buttons[i]:SetPoint(anchorPoint, anchor, relPoint, colOff + xOff, -row * step + yOff)
+                    visCount = visCount + 1
+                end
             end
         end
         return visCount
+    end
+
+    -------------------------------------------------------------------
+    -- Sort helper: builds sorted index list based on timeleft stored on buttons
+    -------------------------------------------------------------------
+    local function BuildSortedOrder(buttons, sortOrder)
+        if not sortOrder or sortOrder == "Default" then return nil end
+        local entries = {}
+        for i = 1, 16 do
+            if buttons[i]:IsShown() then
+                local tl = buttons[i].timerDuration and buttons[i].timerDuration or 99999
+                if buttons[i].timerStart and buttons[i].timerDuration then
+                    tl = (buttons[i].timerStart + buttons[i].timerDuration) - GetTime()
+                    if tl < 0 then tl = 0 end
+                end
+                table.insert(entries, {idx = i, timeLeft = tl})
+            end
+        end
+        if sortOrder == "Duration ascending" then
+            table.sort(entries, function(a, b) return a.timeLeft < b.timeLeft end)
+        elseif sortOrder == "Duration descending" then
+            table.sort(entries, function(a, b) return a.timeLeft > b.timeLeft end)
+        end
+        local order = {}
+        for _, e in ipairs(entries) do
+            table.insert(order, e.idx)
+        end
+        return order
     end
 
     -------------------------------------------------------------------
     -- Update functions
     -------------------------------------------------------------------
 
-    local function UpdateBuffs(data, anchor, anchorPoint, relPoint, xOff, yOff, growRight, showTimer, iconSize, iconSpacing, perRow, timerStyle, timerFontSize)
+    local function UpdateBuffs(data, anchor, anchorPoint, relPoint, xOff, yOff, growRight, showTimer, iconSize, iconSpacing, perRow, timerStyle, timerFontSize, sortOrder)
         local visible = 0
         local guid = nil
         local texToSpell = {}
@@ -709,12 +771,13 @@ DFRL:NewMod("Auras", 2, function()
             end
         end
         if visible > 0 then
-            LayoutBuffs(data.buffs, anchor, anchorPoint, relPoint, xOff, yOff, growRight, iconSize, iconSpacing, perRow)
+            local sorted = BuildSortedOrder(data.buffs, sortOrder)
+            LayoutBuffs(data.buffs, anchor, anchorPoint, relPoint, xOff, yOff, growRight, iconSize, iconSpacing, perRow, sorted)
         end
         return visible
     end
 
-    local function UpdateDebuffs(data, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, showTimer, iconSize, iconSpacing, perRow, timerStyle, timerFontSize, showSpiral)
+    local function UpdateDebuffs(data, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, showTimer, iconSize, iconSpacing, perRow, timerStyle, timerFontSize, showSpiral, sortOrder)
         extraRowOffset = extraRowOffset or 0
         timerStyle = timerStyle or "White + Red"
         timerFontSize = timerFontSize or 8
@@ -808,7 +871,8 @@ DFRL:NewMod("Auras", 2, function()
                 data.debuffs[i]:Hide()
             end
         end
-        LayoutDebuffs(data.debuffs, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, iconSize, iconSpacing, perRow)
+        local sorted = BuildSortedOrder(data.debuffs, sortOrder)
+        LayoutDebuffs(data.debuffs, anchor, anchorPoint, relPoint, xOff, yOff, growRight, extraRowOffset, iconSize, iconSpacing, perRow, sorted)
     end
 
     local function CountVisibleBuffRows(data, perRow)
@@ -862,9 +926,10 @@ DFRL:NewMod("Auras", 2, function()
         local step = sz + sp
         local tStyle = GetTimerStyle("player")
         local tSize = GetTimerFontSize("player")
+        local sOrder = GetSortOrder("player")
 
         if showBuffs then
-            UpdateBuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize)
+            UpdateBuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize, sOrder)
         else
             for i = 1, 16 do unitData.player.buffs[i]:Hide() end
         end
@@ -872,7 +937,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.player, pr) or 0
 
         if showDebuffs then
-            UpdateDebuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral)
+            UpdateDebuffs(unitData.player, playerAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral, sOrder)
         else
             for i = 1, 16 do unitData.player.debuffs[i]:Hide() end
         end
@@ -893,9 +958,10 @@ DFRL:NewMod("Auras", 2, function()
         local step = sz + sp
         local tStyle = GetTimerStyle("target")
         local tSize = GetTimerFontSize("target")
+        local sOrder = GetSortOrder("target")
 
         if showBuffs then
-            UpdateBuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize)
+            UpdateBuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize, sOrder)
         else
             for i = 1, 16 do unitData.target.buffs[i]:Hide() end
         end
@@ -903,7 +969,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.target, pr) or 0
 
         if showDebuffs then
-            UpdateDebuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral)
+            UpdateDebuffs(unitData.target, targetAnchor, "TOPRIGHT", "TOPRIGHT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral, sOrder)
         else
             for i = 1, 16 do unitData.target.debuffs[i]:Hide() end
         end
@@ -926,9 +992,10 @@ DFRL:NewMod("Auras", 2, function()
         local step = sz + sp
         local tStyle = GetTimerStyle("pet")
         local tSize = GetTimerFontSize("pet")
+        local sOrder = GetSortOrder("pet")
 
         if showBuffs and UnitExists("pet") then
-            UpdateBuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize)
+            UpdateBuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize, sOrder)
         else
             for i = 1, 16 do unitData.pet.buffs[i]:Hide() end
         end
@@ -936,7 +1003,7 @@ DFRL:NewMod("Auras", 2, function()
         local buffRows = showBuffs and CountVisibleBuffRows(unitData.pet, pr) or 0
 
         if showDebuffs and UnitExists("pet") then
-            UpdateDebuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral)
+            UpdateDebuffs(unitData.pet, petAnchor, "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral, sOrder)
         else
             for i = 1, 16 do unitData.pet.debuffs[i]:Hide() end
         end
@@ -958,12 +1025,13 @@ DFRL:NewMod("Auras", 2, function()
         local step = sz + sp
         local tStyle = GetTimerStyle("party")
         local tSize = GetTimerFontSize("party")
+        local sOrder = GetSortOrder("party")
 
         for idx = 1, 4 do
             if not partyAnchors[idx] then break end
 
             if showBuffs and UnitExists("party" .. idx) then
-                UpdateBuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize)
+                UpdateBuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, 0, growRight, showBuffTimer, sz, sp, pr, tStyle, tSize, sOrder)
             else
                 for i = 1, 16 do
                     if partyData[idx].buffs[i] then partyData[idx].buffs[i]:Hide() end
@@ -973,7 +1041,7 @@ DFRL:NewMod("Auras", 2, function()
             local buffRows = showBuffs and CountVisibleBuffRows(partyData[idx], pr) or 0
 
             if showDebuffs and UnitExists("party" .. idx) then
-                UpdateDebuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral)
+                UpdateDebuffs(partyData[idx], partyAnchors[idx], "TOPLEFT", "TOPLEFT", 0, -buffRows * step, growRight, 0, showDebuffTimer, sz, sp, pr, tStyle, tSize, showSpiral, sOrder)
             else
                 for i = 1, 16 do
                     if partyData[idx].debuffs[i] then partyData[idx].debuffs[i]:Hide() end
@@ -1580,6 +1648,7 @@ DFRL:NewMod("Auras", 2, function()
     callbacks.playerGrowRight = function() UpdatePlayerAuras() end
     callbacks.playerTimerFontSize = function() UpdatePlayerAuras() end
     callbacks.playerTimerStyle = function() UpdatePlayerAuras() end
+    callbacks.playerSortOrder = function() UpdatePlayerAuras() end
     -- Target callbacks
     callbacks.targetBuffs = function() UpdateTargetAuras() end
     callbacks.targetDebuffs = function() UpdateTargetAuras() end
@@ -1591,6 +1660,7 @@ DFRL:NewMod("Auras", 2, function()
     callbacks.targetGrowRight = function() UpdateTargetAuras() end
     callbacks.targetTimerFontSize = function() UpdateTargetAuras() end
     callbacks.targetTimerStyle = function() UpdateTargetAuras() end
+    callbacks.targetSortOrder = function() UpdateTargetAuras() end
     -- Pet callbacks
     callbacks.petBuffs = function() UpdatePetAuras() end
     callbacks.petDebuffs = function() UpdatePetAuras() end
@@ -1602,6 +1672,7 @@ DFRL:NewMod("Auras", 2, function()
     callbacks.petGrowRight = function() UpdatePetAuras() end
     callbacks.petTimerFontSize = function() UpdatePetAuras() end
     callbacks.petTimerStyle = function() UpdatePetAuras() end
+    callbacks.petSortOrder = function() UpdatePetAuras() end
     -- Party callbacks
     callbacks.partyBuffs = function() UpdatePartyAuras() end
     callbacks.partyDebuffs = function() UpdatePartyAuras() end
@@ -1613,6 +1684,7 @@ DFRL:NewMod("Auras", 2, function()
     callbacks.partyGrowRight = function() UpdatePartyAuras() end
     callbacks.partyTimerFontSize = function() UpdatePartyAuras() end
     callbacks.partyTimerStyle = function() UpdatePartyAuras() end
+    callbacks.partySortOrder = function() UpdatePartyAuras() end
     -- Buff Bar callbacks
     callbacks.buffBarShowBuffs = function(val)
         if buffBar.buffFrame then
