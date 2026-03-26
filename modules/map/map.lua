@@ -293,8 +293,8 @@ DFRL:NewMod("Map", 1, function()
                         frame_width = 200,
                         frame_height = 20,
 
-                        custom_text  = color and "|cffff9999Horde"    or "|cffddddddHorde",
-                        custom_text2 = color and "|cff99ccffAlliance" or "|cffddddddAlliance",
+                        custom_text  = "",
+                        custom_text2 = "",
                         custom_text3 = "",
 
                         line_spacing = 0,
@@ -305,10 +305,19 @@ DFRL:NewMod("Map", 1, function()
                     }
 
                     local function getCustomText()
-                        if currentColorMode then
-                            return "|cffff9999Horde", "|cff99ccffAlliance"
+                        local _, faction = UnitFactionGroup("player")
+                        local firstLabel, secondLabel
+                        if faction == "Horde" then
+                            firstLabel, secondLabel = "Horde", "Alliance"
                         else
-                            return "|cffddddddHorde", "|cffddddddAlliance"
+                            firstLabel, secondLabel = "Alliance", "Horde"
+                        end
+                        if currentColorMode then
+                            local c1 = firstLabel == "Horde" and "|cffff9999" or "|cff99ccff"
+                            local c2 = secondLabel == "Horde" and "|cffff9999" or "|cff99ccff"
+                            return c1 .. firstLabel, c2 .. secondLabel
+                        else
+                            return "|cffdddddd" .. firstLabel, "|cffdddddd" .. secondLabel
                         end
                     end
 
