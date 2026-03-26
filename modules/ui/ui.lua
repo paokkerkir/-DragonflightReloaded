@@ -320,6 +320,16 @@ DFRL:NewMod("Ui", 5, function()
                 return true
             end
 
+            -- worldmap tile textures (e.g. Interface\WorldMap\Kalimdor\Kalimdor1)
+            if string.find(tex, "WorldMap\\") and string.find(tex, "\\", string.find(tex, "WorldMap\\") + 9) then
+                return true
+            end
+
+            -- LFT role icons
+            if string.find(tex, "battlenetworking0") or string.find(tex, "damage") or string.find(tex, "tank") or string.find(tex, "healer") then
+                return true
+            end
+
             return nil
         end
 
@@ -359,6 +369,10 @@ DFRL:NewMod("Ui", 5, function()
 					AddBackground(frame, 300, 330, 24, -82)
 				elseif value and name and string.find(name, "^GossipFrameGreetingPanel$") then
 					AddBackground(frame, 300, 330, 24, -82)
+				elseif value and name and string.find(name, "^SpellBookFrame$") then
+					AddBackground(frame, 325, 355, 17, -74)
+				elseif value and name and string.find(name, "^ItemTextFrame$") then
+					AddBackground(frame, 300, 355, 24, -74)
 				elseif frame.Material then
 					frame.Material:Hide()
 				end
@@ -373,31 +387,54 @@ DFRL:NewMod("Ui", 5, function()
             end
         end
 
-        local frames = {
-            QuestLogFrame,
-            QuestLogDetailScrollFrame,
-            QuestFrame,
-            GossipFrame,
-            MerchantFrame,
-            TaxiFrame,
-            BankFrame,
-            TabardFrame,
-            PetStableFrame,
+        local frameNames = {
+            "QuestLogFrame", "QuestLogDetailScrollFrame", "QuestFrame",
+            "GossipFrame", "MerchantFrame", "TaxiFrame", "BankFrame",
+            "TabardFrame", "PetStableFrame", "SpellBookFrame", "MailFrame",
+            "WorldMapFrame", "TradeFrame", "FriendsFrame", "LFTFrame",
+            "ItemTextFrame",
+            -- addon-loaded frames (may be nil until addon loads)
+            "TradeSkillFrame", "CraftFrame", "ClassTrainerFrame",
         }
 
-        for _, frame in pairs(frames) do
-            Darken(frame)
+        for _, name in pairs(frameNames) do
+            local frame = _G[name]
+            if frame then Darken(frame) end
         end
     end
 
     -- hook frames that rebuild content on show
-    local hookFrames = {GossipFrame, MerchantFrame, TaxiFrame, BankFrame, TabardFrame, PetStableFrame, QuestFrame}
-    for _, frame in pairs(hookFrames) do
+    local hookFrameNames = {
+        "GossipFrame", "MerchantFrame", "TaxiFrame", "BankFrame",
+        "TabardFrame", "PetStableFrame", "QuestFrame", "SpellBookFrame",
+        "MailFrame", "WorldMapFrame", "TradeFrame", "FriendsFrame",
+        "LFTFrame", "ItemTextFrame",
+    }
+    for _, name in pairs(hookFrameNames) do
+        local frame = _G[name]
         if frame then
             HookScript(frame, "OnShow", function()
-                callbacks.questLog(DFRL:GetTempDB("Ui", "questLog"))
+                callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
             end)
         end
+    end
+
+    -- hook addon-loaded frames (TradeSkillFrame, CraftFrame, ClassTrainerFrame)
+    local addonFrames = {
+        ["Blizzard_TradeSkillUI"] = "TradeSkillFrame",
+        ["Blizzard_CraftUI"] = "CraftFrame",
+        ["Blizzard_TrainerUI"] = "ClassTrainerFrame",
+    }
+    for addon, frameName in pairs(addonFrames) do
+        HookAddonOrVariable(addon, function()
+            local frame = _G[frameName]
+            if frame then
+                callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
+                HookScript(frame, "OnShow", function()
+                    callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
+                end)
+            end
+        end)
     end
 
     callbacks.gameMenu = function(value)
