@@ -9,7 +9,7 @@ The Dragonflight UI for Turtle WoW (1.18.1).
 - Over 230 settings combined with ShaguTweaks + ShaguTweaks-extras
 
 **NEW
-- Dark Panels mode - not only Quest Log anymore
+- Dark mode - not only Quest Log and Character panel anymore
 - Optional Buff Bar to replace default top-right buffs (draggable via Ctrl+Alt+Shift, configurable size/spacing/sort)
 - Sort by: Duration ascending, Duration descending, or Default WoW order
 - Aura system with buff/debuff icons on Player, Target, Pet, and Party frames
