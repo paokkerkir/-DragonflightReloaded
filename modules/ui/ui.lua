@@ -1,6 +1,6 @@
 DFRL:NewDefaults("Ui", {
     enabled = {true},
-    questLog = {false, "checkbox", nil, nil, "appearance", 1, "Enable dark mode for the questlog", nil, nil},
+    darkPanels = {false, "checkbox", nil, nil, "appearance", 1, "Enable dark mode for NPC & quest panels", nil, nil},
     gameMenu = {false, "checkbox", nil, nil, "appearance", 2, "Enable dark mode for the game menu", "Only for Blizzards version", nil},
     characterPanel = {false, "checkbox", nil, nil, "appearance", 3, "Enable dark mode for the character panel", nil, nil},
     hideErrorMessage = {false, "checkbox", nil, nil, "ui tweaks", 4, "Hide the top UI error message (e.g. 'Spell is not ready')", nil, nil},
@@ -297,7 +297,7 @@ DFRL:NewMod("Ui", 5, function()
     -- callbacks
     local callbacks = {}
 
-    callbacks.questLog = function(value)
+    callbacks.darkPanels = function(value)
         local r, g, b, a
         if value then
             r, g, b, a = 0.4, 0.4, 0.4, 1
@@ -341,33 +341,62 @@ DFRL:NewMod("Ui", 5, function()
 		end
 
         local function Darken(frame)
-            if frame and frame.GetRegions then
+            if not frame then return end
+
+            -- recurse into children
+            if frame.GetChildren then
+                for _, child in pairs({frame:GetChildren()}) do
+                    Darken(child)
+                end
+            end
+
+            if frame.GetRegions then
                 local name = frame.GetName and frame:GetName()
 
                 if value and name and string.find(name, "^QuestLogDetailScrollFrame$") then
 					AddBackground(frame, QuestLogDetailScrollChildFrame:GetWidth(), QuestLogDetailScrollChildFrame:GetHeight(), 0, 0)
 				elseif value and name and string.find(name, "^QuestFrame(.+)Panel$") then
 					AddBackground(frame, 300, 330, 24, -82)
+				elseif value and name and string.find(name, "^GossipFrameGreetingPanel$") then
+					AddBackground(frame, 300, 330, 24, -82)
 				elseif frame.Material then
 					frame.Material:Hide()
 				end
 
                 for _, region in pairs({frame:GetRegions()}) do
-                if region and region.GetObjectType and region:GetObjectType() == "Texture" and region.SetVertexColor then
-                    if not IsBlacklisted(region) then
-                    region:SetVertexColor(r, g, b, a)
+                    if region and region.GetObjectType and region:GetObjectType() == "Texture" and region.SetVertexColor then
+                        if not IsBlacklisted(region) then
+                            region:SetVertexColor(r, g, b, a)
+                        end
                     end
-                end
                 end
             end
         end
 
-        Darken(QuestLogFrame)
-        Darken(QuestLogDetailScrollFrame)
-        Darken(QuestFrame)
+        local frames = {
+            QuestLogFrame,
+            QuestLogDetailScrollFrame,
+            QuestFrame,
+            GossipFrame,
+            MerchantFrame,
+            TaxiFrame,
+            BankFrame,
+            TabardFrame,
+            PetStableFrame,
+        }
 
-        for _, name in pairs({"QuestFrameGreetingPanel", "QuestFrameProgressPanel", "QuestFrameRewardPanel", "QuestFrameDetailPanel"}) do
-            Darken(_G[name])
+        for _, frame in pairs(frames) do
+            Darken(frame)
+        end
+    end
+
+    -- hook frames that rebuild content on show
+    local hookFrames = {GossipFrame, MerchantFrame, TaxiFrame, BankFrame, TabardFrame, PetStableFrame, QuestFrame}
+    for _, frame in pairs(hookFrames) do
+        if frame then
+            HookScript(frame, "OnShow", function()
+                callbacks.questLog(DFRL:GetTempDB("Ui", "questLog"))
+            end)
         end
     end
 
