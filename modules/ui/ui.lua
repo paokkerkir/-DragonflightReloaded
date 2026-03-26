@@ -320,11 +320,6 @@ DFRL:NewMod("Ui", 5, function()
                 return true
             end
 
-            -- worldmap tile textures (e.g. Interface\WorldMap\Kalimdor\Kalimdor1)
-            if string.find(tex, "WorldMap\\") and string.find(tex, "\\", string.find(tex, "WorldMap\\") + 9) then
-                return true
-            end
-
             -- LFT role icons
             if string.find(tex, "battlenetworking0") or string.find(tex, "damage") or string.find(tex, "tank") or string.find(tex, "healer") then
                 return true
@@ -350,11 +345,11 @@ DFRL:NewMod("Ui", 5, function()
 			frame.Material:Show()
 		end
 
-        local function Darken(frame)
+        local function Darken(frame, noRecurse)
             if not frame then return end
 
             -- recurse into children
-            if frame.GetChildren then
+            if not noRecurse and frame.GetChildren then
                 for _, child in pairs({frame:GetChildren()}) do
                     Darken(child)
                 end
@@ -391,7 +386,7 @@ DFRL:NewMod("Ui", 5, function()
             "QuestLogFrame", "QuestLogDetailScrollFrame", "QuestFrame",
             "GossipFrame", "MerchantFrame", "TaxiFrame", "BankFrame",
             "TabardFrame", "PetStableFrame", "SpellBookFrame", "MailFrame",
-            "WorldMapFrame", "TradeFrame", "FriendsFrame", "LFTFrame",
+            "TradeFrame", "FriendsFrame", "LFTFrame",
             "ItemTextFrame",
             -- addon-loaded frames (may be nil until addon loads)
             "TradeSkillFrame", "CraftFrame", "ClassTrainerFrame",
@@ -401,6 +396,21 @@ DFRL:NewMod("Ui", 5, function()
             local frame = _G[name]
             if frame then Darken(frame) end
         end
+
+        -- worldmap: darken frame chrome only, not map content/children
+        if WorldMapFrame then Darken(WorldMapFrame, true) end
+    end
+
+    -- raise worldmap above MEDIUM strata frames (PWB_Panel, pfQuest, etc.)
+    -- Magnify sets strata in Minimize/Maximize but not on initial open
+    if WorldMapFrame then
+        HookScript(WorldMapFrame, "OnShow", function()
+            if WORLDMAP_WINDOWED == 1 then
+                WorldMapFrame:SetFrameStrata("FULLSCREEN")
+            else
+                WorldMapFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+            end
+        end)
     end
 
     -- hook frames that rebuild content on show
