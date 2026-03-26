@@ -401,17 +401,6 @@ DFRL:NewMod("Ui", 5, function()
         if WorldMapFrame then Darken(WorldMapFrame, true) end
     end
 
-    -- raise worldmap above MEDIUM strata frames (PWB_Panel, pfQuest, etc.)
-    -- Magnify sets strata in Minimize/Maximize but not on initial open
-    if WorldMapFrame then
-        HookScript(WorldMapFrame, "OnShow", function()
-            if WORLDMAP_WINDOWED == 1 then
-                WorldMapFrame:SetFrameStrata("FULLSCREEN")
-            else
-                WorldMapFrame:SetFrameStrata("FULLSCREEN_DIALOG")
-            end
-        end)
-    end
 
     -- hook frames that rebuild content on show
     local hookFrameNames = {
