@@ -229,7 +229,7 @@ local darkMode = {
     },
     ["Ui"] = {
         ["enabled"] = true,
-        ["questLog"] = true,
+        ["darkPanels"] = true,
         ["lowHpThreshold"] = 70,
         ["gameMenu"] = false,
         ["showPlates"] = false,
@@ -701,7 +701,7 @@ local lightMode = {
     },
     ["Ui"] = {
         ["enabled"] = true,
-        ["questLog"] = false,
+        ["darkPanels"] = false,
         ["lowHpThreshold"] = 70,
         ["gameMenu"] = false,
         ["showPlates"] = false,
