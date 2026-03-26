@@ -77,7 +77,7 @@ DFRL:NewMod("Menu", 1, function()
                 Enable_BagButtons()
             end)
 
-            local drBtn = DFRL.tools.CreateButton(self.menuframe, "|cFFFFD100Dragonflight:|r Reloaded", self.btnw, self.btnh)
+            local drBtn = DFRL.tools.CreateButton(self.menuframe, "|cFFFFD100Dragonflight:|r UI", self.btnw, self.btnh)
             drBtn:SetPoint("TOP", self.menuframe, "TOP", 0, -self.space)
             drBtn:SetScript("OnClick", function()
                 self.menuframe:Hide()
