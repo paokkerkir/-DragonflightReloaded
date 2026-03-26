@@ -323,28 +323,34 @@ DFRL:NewMod("Ui", 5, function()
             return nil
         end
 
-        local function AddBackground(frame)
-            if not frame.Material then
-                local tex = frame:CreateTexture(nil, "OVERLAY")
-                tex:SetTexture("Interface\\Stationery\\StationeryTest1")
-                tex:SetWidth(frame:GetWidth())
-                tex:SetHeight(frame:GetHeight())
-                tex:SetPoint("TOPLEFT", frame, 0, 0)
-                tex:SetVertexColor(.8, .8, .8)
-                frame.Material = tex
-            end
-            frame.Material:Show()
-        end
+        local function AddBackground(frame, w, h, x, y)
+			w = w or frame:GetWidth()
+			h = h or frame:GetHeight()
+			x = x or 0
+			y = y or 0
+			if not frame.Material then
+				local tex = frame:CreateTexture(nil, "OVERLAY")
+				tex:SetTexture("Interface\\Stationery\\StationeryTest1")
+				tex:SetWidth(w)
+				tex:SetHeight(h)
+				tex:SetPoint("TOPLEFT", frame, x, y)
+				tex:SetVertexColor(.8, .8, .8)
+				frame.Material = tex
+			end
+			frame.Material:Show()
+		end
 
         local function Darken(frame)
             if frame and frame.GetRegions then
                 local name = frame.GetName and frame:GetName()
 
                 if value and name and string.find(name, "^QuestLogDetailScrollFrame$") then
-                AddBackground(frame)
-                elseif frame.Material then
-                frame.Material:Hide()
-                end
+					AddBackground(frame, QuestLogDetailScrollChildFrame:GetWidth(), QuestLogDetailScrollChildFrame:GetHeight(), 0, 0)
+				elseif value and name and string.find(name, "^QuestFrame(.+)Panel$") then
+					AddBackground(frame, 300, 330, 24, -82)
+				elseif frame.Material then
+					frame.Material:Hide()
+				end
 
                 for _, region in pairs({frame:GetRegions()}) do
                 if region and region.GetObjectType and region:GetObjectType() == "Texture" and region.SetVertexColor then
