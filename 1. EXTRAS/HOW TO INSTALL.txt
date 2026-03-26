@@ -1,3 +1,5 @@
-Place these directly into your WoW/Interface/ folder, not into your AddOns folder.
+Place the Minimap folder directly into your WoW/Interface/ folder, not into your AddOns folder.
 
 This is not an addon, these are direct texture replacements.
+
+If you use Magnify addon, place WorldMapArrow.tga from Magnify folder to ...TurtleWoW\Interface\AddOns\Magnify\assets folder and replace.
