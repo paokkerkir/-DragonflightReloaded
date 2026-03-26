@@ -316,7 +316,7 @@ DFRL:NewMod("Ui", 5, function()
                 end
             end
 
-            if string.find(tex, "Button") or string.find(tex, "Icon") or string.find(tex, "Portrait") or string.find(tex, "StationeryTest") then
+            if string.find(tex, "Button") or string.find(tex, "Icon") or string.find(string.lower(tex), "portrait") or string.find(tex, "StationeryTest") then
                 return true
             end
 
