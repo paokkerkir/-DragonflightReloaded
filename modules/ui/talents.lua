@@ -82,6 +82,7 @@ DFRL:NewMod("Talents", 1, function()
         closeButton:SetPushedTexture('Interface\\AddOns\\-DragonflightReloaded\\media\\tex\\ui\\close_pushed.tga')
         closeButton:SetHighlightTexture('Interface\\AddOns\\-DragonflightReloaded\\media\\tex\\ui\\close_normal.tga')
         closeButton:SetScript('OnClick', function()
+            pcall(PlaySound, "TalentScreenClose")
             frame:Hide()
             UpdateMicroButtons()
         end)
@@ -562,6 +563,13 @@ DFRL:NewMod("Talents", 1, function()
         if UnitLevel('player') < 10 then
             return
         end
+            
+         if frame and frame:IsVisible() then
+            pcall(PlaySound, "TalentScreenClose")
+        else
+            pcall(PlaySound, "TalentScreenOpen")
+        end
+            
         ToggleFrame()
         UpdateMicroButtons()
     end
