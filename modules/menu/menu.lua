@@ -70,11 +70,23 @@ DFRL:NewMod("Menu", 1, function()
             self.menuframe:SetScript("OnShow", function()
                 UpdateMicroButtons()
                 Disable_BagButtons()
+    
+                    if SOUNDKIT and SOUNDKIT.IG_MAINMENU_OPEN then
+                    PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
+                    else
+                    PlaySound("igMainMenuOpen")
+                    end 
             end)
 
             self.menuframe:SetScript("OnHide", function()
                 UpdateMicroButtons()
                 Enable_BagButtons()
+                        
+                        if SOUNDKIT and SOUNDKIT.IG_MAINMENU_CLOSE then
+                        PlaySound(SOUNDKIT.IG_MAINMENU_CLOSE)
+                        else
+                        PlaySound("igMainMenuClose")
+                        end
             end)
 
             local drBtn = DFRL.tools.CreateButton(self.menuframe, "|cFFFFD100Dragonflight:|r UI", self.btnw, self.btnh)
