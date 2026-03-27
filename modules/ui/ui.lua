@@ -419,19 +419,27 @@ DFRL:NewMod("Ui", 5, function()
     end
 
     -- hook addon-loaded frames (TradeSkillFrame, CraftFrame, ClassTrainerFrame)
-    local addonFrames = {
-        ["Blizzard_TradeSkillUI"] = "TradeSkillFrame",
-        ["Blizzard_CraftUI"] = "CraftFrame",
-        ["Blizzard_TrainerUI"] = "ClassTrainerFrame",
-    }
-    for addon, frameName in pairs(addonFrames) do
-        HookAddonOrVariable(addon, function()
-            local frame = _G[frameName]
-            if frame then
-                callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
-                HookScript(frame, "OnShow", function()
+    do
+        local addonFrames = {
+            ["Blizzard_TradeSkillUI"] = "TradeSkillFrame",
+            ["Blizzard_CraftUI"] = "CraftFrame",
+            ["Blizzard_TrainerUI"] = "ClassTrainerFrame",
+        }
+        local hookedAddons = {}
+        local addonWatcher = CreateFrame("Frame")
+        addonWatcher:RegisterEvent("ADDON_LOADED")
+        addonWatcher:SetScript("OnEvent", function()
+            local addonName = arg1
+            local frameName = addonFrames[addonName]
+            if frameName and not hookedAddons[addonName] then
+                hookedAddons[addonName] = true
+                local frame = _G[frameName]
+                if frame then
                     callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
-                end)
+                    HookScript(frame, "OnShow", function()
+                        callbacks.darkPanels(DFRL:GetTempDB("Ui", "darkPanels"))
+                    end)
+                end
             end
         end)
     end
