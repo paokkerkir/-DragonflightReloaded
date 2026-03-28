@@ -378,29 +378,47 @@ DFRL:NewMod("Auras", 2, function()
     end
 
     -------------------------------------------------------------------
-    -- Hide default Blizzard target buff/debuff frames
+    -- Hide/restore default Blizzard auras (conditional on custom aura settings)
+    -- When custom auras are enabled we suppress Blizzard's; when disabled
+    -- we restore Blizzard defaults so their native display + hover works.
     -------------------------------------------------------------------
 
+    -- Save original Blizzard functions so we can restore them
+    local origTargetFrame_UpdateAuras = _G.TargetFrame_UpdateAuras
+    local origPartyMemberFrame_UpdateMember = _G.PartyMemberFrame_UpdateMember
+    local origPetFrame_Update = _G.PetFrame_Update
+    local origRefreshBuffs = _G.RefreshBuffs
+    local origPartyBuffTooltipShow = PartyMemberBuffTooltip and PartyMemberBuffTooltip.Show
+
     local function HideBlizzardTargetAuras()
+        local customBuffs = DFRL:GetTempDB("Auras", "targetBuffs")
+        local customDebuffs = DFRL:GetTempDB("Auras", "targetDebuffs")
         for i = 1, 16 do
             local buff = _G["TargetFrameBuff" .. i]
             if buff then
-                buff:Hide()
-                buff:SetScript("OnShow", function() this:Hide() end)
+                if customBuffs then
+                    buff:Hide()
+                    buff:SetScript("OnShow", function() this:Hide() end)
+                else
+                    buff:SetScript("OnShow", nil)
+                end
             end
             local debuff = _G["TargetFrameDebuff" .. i]
             if debuff then
-                debuff:Hide()
-                debuff:SetScript("OnShow", function() this:Hide() end)
+                if customDebuffs then
+                    debuff:Hide()
+                    debuff:SetScript("OnShow", function() this:Hide() end)
+                else
+                    debuff:SetScript("OnShow", nil)
+                end
             end
         end
     end
 
     HideBlizzardTargetAuras()
 
-    -- also hook TargetFrame_UpdateAuras to keep them hidden
-    if _G.TargetFrame_UpdateAuras then
-        local origTargetFrame_UpdateAuras = _G.TargetFrame_UpdateAuras
+    -- Hook TargetFrame_UpdateAuras to conditionally keep them hidden
+    if origTargetFrame_UpdateAuras then
         _G.TargetFrame_UpdateAuras = function(a1, a2, a3, a4, a5)
             origTargetFrame_UpdateAuras(a1, a2, a3, a4, a5)
             HideBlizzardTargetAuras()
@@ -408,35 +426,72 @@ DFRL:NewMod("Auras", 2, function()
     end
 
     -------------------------------------------------------------------
-    -- Hide default Blizzard party buff tooltip & icons
+    -- Hide/restore default Blizzard party buff tooltip & icons
     -------------------------------------------------------------------
 
-    -- Suppress the party member buff tooltip that appears on hover
+    -- Suppress the party member buff tooltip (restorable)
     if PartyMemberBuffTooltip then
         PartyMemberBuffTooltip:Hide()
         PartyMemberBuffTooltip.Show = function(self) self:Hide() end
     end
 
-    -- Disable the default party buff refresh (creates default buff icons on party frames)
-    if RefreshBuffs then
+    -- Disable the default party buff refresh (restorable)
+    if origRefreshBuffs then
         RefreshBuffs = function() end
     end
 
-    -- Hide default party member buff/debuff frames
+    local function RestoreBlizzardPartyTooltip()
+        if PartyMemberBuffTooltip and origPartyBuffTooltipShow then
+            PartyMemberBuffTooltip.Show = origPartyBuffTooltipShow
+        end
+        if origRefreshBuffs then
+            RefreshBuffs = origRefreshBuffs
+        end
+    end
+
+    local function SuppressBlizzardPartyTooltip()
+        if PartyMemberBuffTooltip then
+            PartyMemberBuffTooltip:Hide()
+            PartyMemberBuffTooltip.Show = function(self) self:Hide() end
+        end
+        if origRefreshBuffs then
+            RefreshBuffs = function() end
+        end
+    end
+
+    -- Hide default party member buff/debuff frames (conditional)
     local function HideBlizzardPartyAuras()
+        local customBuffs = DFRL:GetTempDB("Auras", "partyBuffs")
+        local customDebuffs = DFRL:GetTempDB("Auras", "partyDebuffs")
+
+        -- Restore or suppress tooltip/refresh based on whether any custom party auras are active
+        if customBuffs or customDebuffs then
+            SuppressBlizzardPartyTooltip()
+        else
+            RestoreBlizzardPartyTooltip()
+        end
+
         for p = 1, 4 do
             for i = 1, 4 do
                 local buff = _G["PartyMemberFrame" .. p .. "Buff" .. i]
                 if buff then
-                    buff:Hide()
-                    buff:SetScript("OnShow", function() this:Hide() end)
+                    if customBuffs then
+                        buff:Hide()
+                        buff:SetScript("OnShow", function() this:Hide() end)
+                    else
+                        buff:SetScript("OnShow", nil)
+                    end
                 end
             end
             for i = 1, 4 do
                 local debuff = _G["PartyMemberFrame" .. p .. "Debuff" .. i]
                 if debuff then
-                    debuff:Hide()
-                    debuff:SetScript("OnShow", function() this:Hide() end)
+                    if customDebuffs then
+                        debuff:Hide()
+                        debuff:SetScript("OnShow", function() this:Hide() end)
+                    else
+                        debuff:SetScript("OnShow", nil)
+                    end
                 end
             end
         end
@@ -444,37 +499,45 @@ DFRL:NewMod("Auras", 2, function()
 
     HideBlizzardPartyAuras()
 
-    -- Hide default pet buff/debuff frames
+    -- Hide default pet buff/debuff frames (conditional)
     local function HideBlizzardPetAuras()
+        local customBuffs = DFRL:GetTempDB("Auras", "petBuffs")
+        local customDebuffs = DFRL:GetTempDB("Auras", "petDebuffs")
         for i = 1, 4 do
             local buff = _G["PetFrameBuff" .. i]
             if buff then
-                buff:Hide()
-                buff:SetScript("OnShow", function() this:Hide() end)
+                if customBuffs then
+                    buff:Hide()
+                    buff:SetScript("OnShow", function() this:Hide() end)
+                else
+                    buff:SetScript("OnShow", nil)
+                end
             end
             local debuff = _G["PetFrameDebuff" .. i]
             if debuff then
-                debuff:Hide()
-                debuff:SetScript("OnShow", function() this:Hide() end)
+                if customDebuffs then
+                    debuff:Hide()
+                    debuff:SetScript("OnShow", function() this:Hide() end)
+                else
+                    debuff:SetScript("OnShow", nil)
+                end
             end
         end
     end
 
     HideBlizzardPetAuras()
 
-    -- Re-hide after Blizzard updates party frames
-    if _G.PartyMemberFrame_UpdateMember then
-        local origPartyUpdate = _G.PartyMemberFrame_UpdateMember
+    -- Re-hide after Blizzard updates party/pet frames (conditional)
+    if origPartyMemberFrame_UpdateMember then
         _G.PartyMemberFrame_UpdateMember = function(a1, a2, a3, a4, a5)
-            origPartyUpdate(a1, a2, a3, a4, a5)
+            origPartyMemberFrame_UpdateMember(a1, a2, a3, a4, a5)
             HideBlizzardPartyAuras()
         end
     end
 
-    if _G.PetFrame_Update then
-        local origPetUpdate = _G.PetFrame_Update
+    if origPetFrame_Update then
         _G.PetFrame_Update = function(a1, a2, a3, a4, a5)
-            origPetUpdate(a1, a2, a3, a4, a5)
+            origPetFrame_Update(a1, a2, a3, a4, a5)
             HideBlizzardPetAuras()
         end
     end
@@ -975,6 +1038,11 @@ DFRL:NewMod("Auras", 2, function()
         end
 
         HideBlizzardTargetAuras()
+
+        -- Trigger Blizzard refresh so restored default auras appear
+        if (not showBuffs or not showDebuffs) and origTargetFrame_UpdateAuras then
+            origTargetFrame_UpdateAuras()
+        end
     end
 
     local function UpdatePetAuras()
@@ -1008,6 +1076,11 @@ DFRL:NewMod("Auras", 2, function()
             for i = 1, 16 do unitData.pet.debuffs[i]:Hide() end
         end
         HideBlizzardPetAuras()
+
+        -- Trigger Blizzard refresh so restored default auras appear
+        if (not showBuffs or not showDebuffs) and origPetFrame_Update then
+            origPetFrame_Update()
+        end
     end
 
     local function UpdatePartyAuras()
@@ -1049,6 +1122,11 @@ DFRL:NewMod("Auras", 2, function()
             end
         end
         HideBlizzardPartyAuras()
+
+        -- Trigger Blizzard refresh so restored default auras appear
+        if (not showBuffs or not showDebuffs) and origRefreshBuffs then
+            origRefreshBuffs()
+        end
     end
 
     local function UpdateAllAuras()
