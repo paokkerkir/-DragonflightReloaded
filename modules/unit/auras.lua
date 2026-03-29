@@ -1038,11 +1038,6 @@ DFRL:NewMod("Auras", 2, function()
         end
 
         HideBlizzardTargetAuras()
-
-        -- Trigger Blizzard refresh so restored default auras appear
-        if (not showBuffs or not showDebuffs) and origTargetFrame_UpdateAuras then
-            origTargetFrame_UpdateAuras()
-        end
     end
 
     local function UpdatePetAuras()
@@ -1076,11 +1071,6 @@ DFRL:NewMod("Auras", 2, function()
             for i = 1, 16 do unitData.pet.debuffs[i]:Hide() end
         end
         HideBlizzardPetAuras()
-
-        -- Trigger Blizzard refresh so restored default auras appear
-        if (not showBuffs or not showDebuffs) and origPetFrame_Update then
-            origPetFrame_Update()
-        end
     end
 
     local function UpdatePartyAuras()
@@ -1122,11 +1112,6 @@ DFRL:NewMod("Auras", 2, function()
             end
         end
         HideBlizzardPartyAuras()
-
-        -- Trigger Blizzard refresh so restored default auras appear
-        if (not showBuffs or not showDebuffs) and origRefreshBuffs then
-            origRefreshBuffs()
-        end
     end
 
     local function UpdateAllAuras()
